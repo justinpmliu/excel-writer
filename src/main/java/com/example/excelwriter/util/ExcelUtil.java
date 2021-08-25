@@ -107,20 +107,23 @@ public class ExcelUtil {
     private void getCellValue(Cell cell, ObjectNode objectNode, String fieldName) {
         CellType cellType = cell.getCellType();
 
-        if (CellType.STRING == cellType) {
-            if ("null".equals(cell.getStringCellValue())) {
-                objectNode.putNull(fieldName);
-            } else {
-                objectNode.put(fieldName, cell.getStringCellValue());
-            }
-        } else if (CellType.NUMERIC == cellType) {
-            objectNode.put(fieldName, cell.getNumericCellValue());
-        } else if (CellType.FORMULA == cellType) {
-            objectNode.put(fieldName, cell.getNumericCellValue());
-        } else if (CellType.BOOLEAN == cellType) {
-            objectNode.put(fieldName, cell.getBooleanCellValue());
-        } else {
-            log.warn("Unsupported cellType: {}, fieldName: {}", cellType, fieldName);
+        switch(cellType) {
+            case STRING:
+                if ("null".equals(cell.getStringCellValue())) {
+                    objectNode.putNull(fieldName);
+                } else {
+                    objectNode.put(fieldName, cell.getStringCellValue());
+                }
+                break;
+            case NUMERIC:
+            case FORMULA:
+                objectNode.put(fieldName, cell.getNumericCellValue());
+                break;
+            case BOOLEAN:
+                objectNode.put(fieldName, cell.getBooleanCellValue());
+                break;
+            default:
+                log.warn("Unsupported cellType: {}, fieldName: {}", cellType, fieldName);
         }
     }
 
